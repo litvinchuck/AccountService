@@ -1,4 +1,4 @@
-package com.example.AccountService.service;
+package com.example.AccountService.services;
 
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;

@@ -2,7 +2,7 @@ package com.example.AccountService.controllers;
 
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
-import com.example.AccountService.service.AuthService;
+import com.example.AccountService.services.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
