@@ -27,6 +27,7 @@ public class AuthController {
 
     @PostMapping("signup")
     public UserResponse signUp(@RequestBody @Valid UserRequest user) {
+        logger.info("POST api/auth/signup body={}", user);
         return authService.signUp(user);
     }
 

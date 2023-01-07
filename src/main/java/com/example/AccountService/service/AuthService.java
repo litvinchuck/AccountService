@@ -21,6 +21,7 @@ public class AuthService {
     }
 
     public UserResponse signUp(UserRequest user) {
+        logger.info("user {} signed up", user);
         return modelMapper.map(user, UserResponse.class);
     }
 
