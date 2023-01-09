@@ -18,8 +18,6 @@ public class UserRequestValidationTests {
 
     private UserRequest correctUserRequest;
 
-    private UserResponse correctUserResponse;
-
     @BeforeAll
     static void setUpBeforeAll() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -32,12 +30,6 @@ public class UserRequestValidationTests {
                 .lastName("Doe")
                 .email("jdoe@acme.com")
                 .password("password")
-                .build();
-
-        correctUserResponse = UserResponse.builder()
-                .name(correctUserRequest.getName())
-                .lastName(correctUserRequest.getLastName())
-                .email(correctUserRequest.getEmail())
                 .build();
     }
 
