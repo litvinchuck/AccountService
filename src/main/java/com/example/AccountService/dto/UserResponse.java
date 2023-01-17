@@ -14,15 +14,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserResponse {
 
-    @NotBlank
+    private String username;
+
     private String name;
 
-    @NotBlank
     @JsonProperty("lastname")
     private String lastName;
 
-    @NotBlank
-    @Email(regexp = ".+@acme\\.com$")
     private String email;
 
 }
