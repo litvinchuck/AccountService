@@ -2,7 +2,6 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.repositories.UserRepository;
 import com.example.AccountService.models.User;
-import com.example.AccountService.security.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("Not found: " + username);
         }
 
-        return new UserDetailsImpl(user);
+        return user;
 
     }
 

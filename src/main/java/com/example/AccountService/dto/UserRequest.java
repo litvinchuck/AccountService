@@ -15,15 +15,8 @@ import lombok.AllArgsConstructor;
 @Builder
 public class UserRequest {
 
-    @NotBlank(message = "username property should not be blank")
-    private String username;
-
     @NotBlank(message = "name property should not be blank")
     private String name;
-
-    @NotBlank(message = "role property should not be blank")
-    @Pattern(regexp="^ROLE_\\S+", message = "role must start with 'ROLE_'")
-    private String role;
 
     @NotBlank(message = "lastname property should not be blank")
     @JsonProperty("lastname")

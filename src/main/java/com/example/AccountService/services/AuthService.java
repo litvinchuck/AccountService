@@ -2,6 +2,7 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
+import com.example.AccountService.models.Role;
 import com.example.AccountService.repositories.UserRepository;
 import com.example.AccountService.models.User;
 import org.modelmapper.ModelMapper;
@@ -32,6 +33,7 @@ public class AuthService {
     public UserResponse signUp(UserRequest userRequest) {
         User user = modelMapper.map(userRequest, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.grantAuthority(Role.ROLE_USER);
         userRepository.save(user);
         logger.info("user {} signed up", user);
         return modelMapper.map(user, UserResponse.class);

@@ -1,5 +1,6 @@
 package com.example.AccountService.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -20,15 +22,26 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    AuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    public SecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint) {
+        this.authenticationEntryPoint = authenticationEntryPoint;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().disable().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                .requestMatchers("/api/auth/test").hasRole("USER")
-//                .anyRequest().authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers("/api/auth/test", "/api/auth/username").hasRole("USER")
+                .anyRequest().authenticated()
+//                .anyRequest().permitAll()
                 .and()
-                .httpBasic();
+                .httpBasic()
+                .authenticationEntryPoint(authenticationEntryPoint) // Handle auth error
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
 
