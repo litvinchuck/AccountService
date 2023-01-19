@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-//@Entity
+@Entity
 public class User implements UserDetails {
 
     @Id

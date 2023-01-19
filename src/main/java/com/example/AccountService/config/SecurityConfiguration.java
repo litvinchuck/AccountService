@@ -31,17 +31,18 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().disable().authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                .requestMatchers("/api/auth/test", "/api/auth/username").hasRole("USER")
-                .anyRequest().authenticated()
-//                .anyRequest().permitAll()
-                .and()
-                .httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint) // Handle auth error
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.csrf().disable().cors().disable().headers().frameOptions().disable().and()
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                    .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+                    .requestMatchers("/h2/**").permitAll()
+                    .requestMatchers("/api/auth/test", "/api/auth/username").hasRole("USER")
+                    .anyRequest().authenticated()
+        )
+        .httpBasic()
+        .authenticationEntryPoint(authenticationEntryPoint) // Handle auth error
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
 
