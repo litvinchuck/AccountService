@@ -23,11 +23,6 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping("/username")
-    public void username(Authentication auth) {
-        System.out.println(auth.getName());
-    }
-
     @GetMapping("/test")
     public String test() {
         return "/test is accessed";
