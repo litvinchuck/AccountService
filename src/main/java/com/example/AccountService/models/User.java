@@ -1,8 +1,7 @@
 package com.example.AccountService.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +11,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "Userdetails")
 public class User implements UserDetails {
@@ -24,6 +24,8 @@ public class User implements UserDetails {
 
     private String lastName;
 
+
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -38,6 +40,8 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    @EqualsAndHashCode.Exclude
     private List<Role> roles = new ArrayList<>();
 
     public User() {
