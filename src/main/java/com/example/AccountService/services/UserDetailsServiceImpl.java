@@ -2,7 +2,7 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
-import com.example.AccountService.exception.UserAlreadyExistsException;
+import com.example.AccountService.exceptions.UserAlreadyExistsException;
 import com.example.AccountService.models.Role;
 import com.example.AccountService.models.User;
 import com.example.AccountService.repositories.UserRepository;

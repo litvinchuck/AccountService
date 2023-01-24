@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "Userdetails")
 public class User implements UserDetails {
@@ -30,26 +31,23 @@ public class User implements UserDetails {
 
     private String password;
 
-    private boolean accountNonExpired;
+    @Builder.Default
+    private boolean accountNonExpired = true;
 
-    private boolean accountNonLocked;
+    @Builder.Default
+    private boolean accountNonLocked = true;
 
-    private boolean credentialsNonExpired;
+    @Builder.Default
+    private boolean credentialsNonExpired = true;
 
-    private boolean enabled;
+    @Builder.Default
+    private boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     @EqualsAndHashCode.Exclude
     private List<Role> roles = new ArrayList<>();
-
-    public User() {
-        this.accountNonExpired = true;
-        this.accountNonLocked = true;
-        this.credentialsNonExpired = true;
-        this.enabled = true;
-    }
 
     @Override
     public String getUsername() {
