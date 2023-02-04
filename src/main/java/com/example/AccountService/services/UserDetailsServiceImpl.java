@@ -7,7 +7,6 @@ import com.example.AccountService.models.Role;
 import com.example.AccountService.models.User;
 import com.example.AccountService.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +22,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+
+    private final TypeMap<UserRequest, User> userTypeMap;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository,
                                   PasswordEncoder passwordEncoder,
-                                  ModelMapper modelMapper) {
+                                  ModelMapper modelMapper,
+                                  TypeMap<UserRequest, User> userTypeMap) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
+        this.userTypeMap = userTypeMap;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public UserResponse signUp(UserRequest userRequest) {
-        if (userRepository.existsByEmail(userRequest.getEmail())) {
+        if (userRepository.existsByEmail(userRequest.getEmail().toLowerCase())) {
             logger.info("user for username {} already exists", userRequest.getEmail());
             throw new UserAlreadyExistsException("user %s already exists".formatted(userRequest.getEmail()));
         }
@@ -58,10 +61,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public User mapToUser(UserRequest userRequest) {
-        Provider<User> userProvider = p -> User.builder().build();
-        TypeMap<UserRequest, User> userTypeMap = modelMapper.createTypeMap(UserRequest.class, User.class);
-        userTypeMap.setProvider(userProvider);
-
         User user = userTypeMap.map(userRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.grantAuthority(Role.ROLE_USER);

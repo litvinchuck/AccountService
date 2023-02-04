@@ -54,6 +54,10 @@ public class User implements UserDetails {
         return getEmail();
     }
 
+    public void setEmail(String email) {
+        this.email = email.toLowerCase();
+    }
+
     public void grantAuthority(Role authority) {
         roles.add(authority);
     }

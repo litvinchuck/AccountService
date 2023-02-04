@@ -92,9 +92,24 @@ class UserDetailsServiceTests {
     }
 
     @Test
+    @DisplayName("Test sign up with upper case email store email in lower case")
+    void testSignUpEmailUpper() {
+        correctUserRequest.setEmail(correctUserRequest.getEmail().toUpperCase());
+        assertThat(userDetailsService.signUp(correctUserRequest)).isEqualTo(correctUserResponse);
+    }
+
+    @Test
     @DisplayName("Test sign up with repeating data throws UserAlreadyExistsException")
     void testSignUpRepeat() {
         userDetailsService.signUp(correctUserRequest);
+        assertThrows(UserAlreadyExistsException.class, () -> userDetailsService.signUp(correctUserRequest));
+    }
+
+    @Test
+    @DisplayName("Test sign up user with repeating email with different case throws UserAlreadyExistsException")
+    void testSignUpEmailCase() {
+        userDetailsService.signUp(correctUserRequest);
+        correctUserRequest.setEmail(correctUserRequest.getEmail().toUpperCase());
         assertThrows(UserAlreadyExistsException.class, () -> userDetailsService.signUp(correctUserRequest));
     }
 
