@@ -3,7 +3,8 @@ package com.example.AccountService.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,8 @@ public class UserRequest {
     @Email(regexp = ".+@acme\\.com$", message = "email should be registered in acme.com domain")
     private String email;
 
-    @NotBlank(message = "password property should not be blank")
+    @NotNull(message = "password property must be present")
+    @Size(min=12)
     private String password;
 
 }
