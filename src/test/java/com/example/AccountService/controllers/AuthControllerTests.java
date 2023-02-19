@@ -46,7 +46,7 @@ class AuthControllerTests {
 
     private UserResponse userResponse;
 
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "secret_password";
 
     @BeforeEach
     void setUp() {

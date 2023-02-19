@@ -1,31 +1,18 @@
 package com.example.AccountService.dto;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static com.example.AccountService.test_utils.ValidationUtils.*;
 
 public class UserRequestValidationTests {
-
-    private static Validator validator;
 
     private UserRequest correctUserRequest;
 
     private static final String SHORT_PASSWORD = "password";
 
     private static final String EXACT_PASSWORD = "babyproofing";
-
-    @BeforeAll
-    static void setUpBeforeAll() {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-    }
 
     @BeforeEach
     void setUpBeforeEach() {
@@ -125,19 +112,6 @@ public class UserRequestValidationTests {
     void exactPassword() {
         correctUserRequest.setPassword(EXACT_PASSWORD);
         assertNoValidationViolations(correctUserRequest);
-    }
-
-    private static void assertNoValidationViolations(UserRequest userRequest) {
-        assertTrue(validator.validate(userRequest).isEmpty());
-    }
-
-    private static void assertNValidationViolations(int n, UserRequest userRequest) {
-        Set<ConstraintViolation<UserRequest>> violations = validator.validate(userRequest);
-        assertEquals(n, violations.size());
-    }
-
-    private static void assertOneValidationViolation(UserRequest userRequest) {
-        assertNValidationViolations(1, userRequest);
     }
 
 }

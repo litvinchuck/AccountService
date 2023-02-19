@@ -1,9 +1,11 @@
 package com.example.AccountService.services;
 
 import com.example.AccountService.AccountServiceApplication;
+import com.example.AccountService.dto.ChangePasswordResponse;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
 import com.example.AccountService.exceptions.BreachedPasswordException;
+import com.example.AccountService.exceptions.SamePasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
 import com.example.AccountService.models.BreachedPassword;
 import com.example.AccountService.models.Role;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -50,7 +53,11 @@ class UserDetailsServiceTests {
 
     private UserResponse correctUserResponse;
 
-    private static final String PASSWORD = "password";
+    private ChangePasswordResponse correctChangePassResponse;
+
+    private static final String PASSWORD = "secret_password";
+
+    private static final String NEW_PASSWORD = "new_secret_password";
 
     @BeforeEach
     void setUp() {
@@ -76,6 +83,10 @@ class UserDetailsServiceTests {
                 .id(1L)
                 .name(correctUserRequest.getName())
                 .lastName(correctUserRequest.getLastName())
+                .email(correctUserRequest.getEmail())
+                .build();
+
+        correctChangePassResponse = ChangePasswordResponse.builder()
                 .email(correctUserRequest.getEmail())
                 .build();
     }
@@ -133,10 +144,40 @@ class UserDetailsServiceTests {
     @Test
     @DisplayName("Sign up user with breached password throws BreachedPasswordException")
     void breachedSignUp() {
+        correctUserRequest.setPassword(getBreachedPassword());
+        assertThrows(BreachedPasswordException.class, () -> userDetailsService.signUp(correctUserRequest));
+    }
+
+    @Test
+    @DisplayName("Test changepass with correct new password")
+    void correctChangePass() {
+        setUpUser();
+        assertThat(userDetailsService.changePass(correctUser, NEW_PASSWORD)).isEqualTo(correctChangePassResponse);
+    }
+
+    @Test
+    @DisplayName("Test changepass with same password")
+    void sameChangePass() {
+        setUpUser();
+        assertThrows(SamePasswordException.class, () -> userDetailsService.changePass(correctUser, PASSWORD));
+    }
+
+    @Test
+    @DisplayName("Test changepass with breached password")
+    void breachedTestPass() {
+        setUpUser();
+        assertThrows(BreachedPasswordException.class,
+                () -> userDetailsService.changePass(correctUser, getBreachedPassword()));
+    }
+
+    private void setUpUser() {
+        userDetailsService.signUp(correctUserRequest);
+    }
+
+    private String getBreachedPassword() {
         List<BreachedPassword> passwords = breachedPasswordRepository.findAll();
         Collections.shuffle(passwords);
-        correctUserRequest.setPassword(passwords.get(0).getPassword());
-        assertThrows(BreachedPasswordException.class, () -> userDetailsService.signUp(correctUserRequest));
+        return passwords.get(0).getPassword();
     }
 
 }

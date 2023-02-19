@@ -1,5 +1,6 @@
 package com.example.AccountService.services;
 
+import com.example.AccountService.dto.ChangePasswordResponse;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
 import com.example.AccountService.exceptions.BreachedPasswordException;
@@ -68,6 +69,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepository.save(user);
         logger.info("user {} signed up", user);
         return modelMapper.map(user, UserResponse.class);
+    }
+
+    public ChangePasswordResponse changePass(User user, String newPassword) {
+        return modelMapper.map(user, ChangePasswordResponse.class);
     }
 
     public User mapToUser(UserRequest userRequest) {
