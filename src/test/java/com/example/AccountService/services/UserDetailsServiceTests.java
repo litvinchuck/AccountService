@@ -95,7 +95,7 @@ class UserDetailsServiceTests {
     }
 
     @Test
-    @DisplayName("Test load user by different case email loads lowercase email user")
+    @DisplayName("Test load user by UPPER case email loads correct user")
     void testLoadByUsernameMixedCase() {
         userDetailsService.signUp(correctUserRequest);
         assertThat(userDetailsService.loadUserByUsername(correctUserRequest.getEmail().toUpperCase()))

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BreachedPasswordRepository extends JpaRepository<BreachedPassword, Long> {
 
+    boolean existsByPassword(String password);
+
 }
