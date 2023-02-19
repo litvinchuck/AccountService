@@ -18,6 +18,10 @@ public class UserRequestValidationTests {
 
     private UserRequest correctUserRequest;
 
+    private static final String SHORT_PASSWORD = "password";
+
+    private static final String EXACT_PASSWORD = "babyproofing";
+
     @BeforeAll
     static void setUpBeforeAll() {
         validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -29,14 +33,14 @@ public class UserRequestValidationTests {
                 .name("John")
                 .lastName("Doe")
                 .email("jdoe@acme.com")
-                .password("password")
+                .password("secret_password")
                 .build();
     }
 
     @Test
     @DisplayName("Correct UserRequest passes validation")
     void correctUserRequestValidates() {
-        assertTrue(validator.validate(correctUserRequest).isEmpty());
+        assertNoValidationViolations(correctUserRequest);
     }
 
     @Test
@@ -107,6 +111,24 @@ public class UserRequestValidationTests {
     void emptyPassword() {
         correctUserRequest.setPassword("");
         assertOneValidationViolation(correctUserRequest);
+    }
+
+    @Test
+    @DisplayName("UserRequest with a password shorter than 12 is rejected")
+    void tooShortPassword() {
+        correctUserRequest.setPassword(SHORT_PASSWORD);
+        assertOneValidationViolation(correctUserRequest);
+    }
+
+    @Test
+    @DisplayName("UserRequest with password length of precisely 12 is accepted")
+    void exactPassword() {
+        correctUserRequest.setPassword(EXACT_PASSWORD);
+        assertNoValidationViolations(correctUserRequest);
+    }
+
+    private static void assertNoValidationViolations(UserRequest userRequest) {
+        assertTrue(validator.validate(userRequest).isEmpty());
     }
 
     private static void assertNValidationViolations(int n, UserRequest userRequest) {

@@ -3,8 +3,11 @@ package com.example.AccountService.services;
 import com.example.AccountService.AccountServiceApplication;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
+import com.example.AccountService.exceptions.BreachedPasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
+import com.example.AccountService.models.BreachedPassword;
 import com.example.AccountService.models.Role;
+import com.example.AccountService.repositories.BreachedPasswordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +27,9 @@ import static org.mockito.Mockito.when;
 
 import com.example.AccountService.models.User;
 
+import java.util.Collections;
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = AccountServiceApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -34,6 +40,9 @@ class UserDetailsServiceTests {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private BreachedPasswordRepository breachedPasswordRepository;
 
     private UserRequest correctUserRequest;
 
@@ -86,6 +95,14 @@ class UserDetailsServiceTests {
     }
 
     @Test
+    @DisplayName("Test load user by different case email loads lowercase email user")
+    void testLoadByUsernameMixedCase() {
+        userDetailsService.signUp(correctUserRequest);
+        assertThat(userDetailsService.loadUserByUsername(correctUserRequest.getEmail().toUpperCase()))
+                .isEqualTo(correctUser);
+    }
+
+    @Test
     @DisplayName("Test sign up with correct data returns correct result")
     void testSignUpWithCorrectData() {
         assertThat(userDetailsService.signUp(correctUserRequest)).isEqualTo(correctUserResponse);
@@ -111,6 +128,15 @@ class UserDetailsServiceTests {
         userDetailsService.signUp(correctUserRequest);
         correctUserRequest.setEmail(correctUserRequest.getEmail().toUpperCase());
         assertThrows(UserAlreadyExistsException.class, () -> userDetailsService.signUp(correctUserRequest));
+    }
+
+    @Test
+    @DisplayName("Sign up user with breached password throws BreachedPasswordException")
+    void breachedSignUp() {
+        List<BreachedPassword> passwords = breachedPasswordRepository.findAll();
+        Collections.shuffle(passwords);
+        correctUserRequest.setPassword(passwords.get(0).getPassword());
+        assertThrows(BreachedPasswordException.class, () -> userDetailsService.signUp(correctUserRequest));
     }
 
 }
