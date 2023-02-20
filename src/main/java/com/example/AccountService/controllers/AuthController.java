@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,7 +41,7 @@ public class AuthController {
     @PostMapping("changepass")
     public ChangePasswordResponse changePass(@RequestBody @Valid ChangePasswordRequest passRequest, Authentication auth) {
         logger.info("POST api/auth/changepass user={}", auth.getPrincipal());
-        return userDetailsService.changePass((User) auth.getPrincipal(), passRequest.getPassword());
+        return userDetailsService.changePass((UserDetails) auth.getPrincipal(), passRequest.getPassword());
     }
 
 }

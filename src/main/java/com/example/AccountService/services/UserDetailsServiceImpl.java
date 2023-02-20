@@ -71,7 +71,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return modelMapper.map(user, UserResponse.class);
     }
 
-    public ChangePasswordResponse changePass(User user, String newPassword) {
+    public ChangePasswordResponse changePass(UserDetails user, String newPassword) {
         return modelMapper.map(user, ChangePasswordResponse.class);
     }
 
