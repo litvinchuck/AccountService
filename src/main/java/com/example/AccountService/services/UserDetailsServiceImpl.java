@@ -4,6 +4,7 @@ import com.example.AccountService.dto.ChangePasswordResponse;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
 import com.example.AccountService.exceptions.BreachedPasswordException;
+import com.example.AccountService.exceptions.SamePasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
 import com.example.AccountService.models.Role;
 import com.example.AccountService.models.User;
@@ -65,22 +66,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             logger.info("user for username {} uses a breached password", userRequest.getEmail());
             throw new BreachedPasswordException("used password is breached");
         }
-        User user = mapToUser(userRequest);
+
+        User user = userTypeMap.map(userRequest);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.grantAuthority(Role.ROLE_USER);
         userRepository.save(user);
         logger.info("user {} signed up", user);
+
         return modelMapper.map(user, UserResponse.class);
     }
 
     public ChangePasswordResponse changePass(UserDetails user, String newPassword) {
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new SamePasswordException("The passwords must be different!");
+        }
+        if (breachedPasswordRepository.existsByPassword(newPassword)) {
+            throw new BreachedPasswordException("The password is in the hacker's database!");
+        }
+
+        User model = modelMapper.map(user, User.class);
+        userRepository.save(model);
         return modelMapper.map(user, ChangePasswordResponse.class);
-    }
-
-    public User mapToUser(UserRequest userRequest) {
-        User user = userTypeMap.map(userRequest);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.grantAuthority(Role.ROLE_USER);
-
-        return user;
     }
 
 }

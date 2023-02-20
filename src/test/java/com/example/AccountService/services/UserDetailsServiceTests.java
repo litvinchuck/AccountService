@@ -156,14 +156,15 @@ class UserDetailsServiceTests {
     }
 
     @Test
-    @DisplayName("Test changepass with same password")
+    @DisplayName("Test changepass with same password throws SamePasswordException")
     void sameChangePass() {
         setUpUser();
+        when(passwordEncoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
         assertThrows(SamePasswordException.class, () -> userDetailsService.changePass(correctUser, PASSWORD));
     }
 
     @Test
-    @DisplayName("Test changepass with breached password")
+    @DisplayName("Test changepass with breached password throws BreachedPasswordException")
     void breachedTestPass() {
         setUpUser();
         assertThrows(BreachedPasswordException.class,
