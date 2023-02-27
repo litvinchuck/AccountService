@@ -1,6 +1,5 @@
 package com.example.AccountService.test_utils;
 
-import com.example.AccountService.dto.UserRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

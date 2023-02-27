@@ -1,15 +1,16 @@
 package com.example.AccountService.services;
 
 import com.example.AccountService.AccountServiceApplication;
+import com.example.AccountService.config.TestConfig;
 import com.example.AccountService.dto.ChangePasswordResponse;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
 import com.example.AccountService.exceptions.BreachedPasswordException;
 import com.example.AccountService.exceptions.SamePasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
-import com.example.AccountService.models.BreachedPassword;
 import com.example.AccountService.models.Role;
 import com.example.AccountService.repositories.BreachedPasswordRepository;
+import com.example.AccountService.test_utils.UserUtilsBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
@@ -30,11 +32,9 @@ import static org.mockito.Mockito.when;
 
 import com.example.AccountService.models.User;
 
-import java.util.Collections;
-import java.util.List;
-
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = AccountServiceApplication.class)
+@Import(TestConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserDetailsServiceTests {
 
@@ -46,6 +46,9 @@ class UserDetailsServiceTests {
 
     @Autowired
     private BreachedPasswordRepository breachedPasswordRepository;
+
+    @Autowired
+    private UserUtilsBean userUtilsComponent;
 
     private UserRequest correctUserRequest;
 
@@ -144,7 +147,7 @@ class UserDetailsServiceTests {
     @Test
     @DisplayName("Sign up user with breached password throws BreachedPasswordException")
     void breachedSignUp() {
-        correctUserRequest.setPassword(getBreachedPassword());
+        correctUserRequest.setPassword(userUtilsComponent.getBreachedPassword());
         assertThrows(BreachedPasswordException.class, () -> userDetailsService.signUp(correctUserRequest));
     }
 
@@ -168,17 +171,11 @@ class UserDetailsServiceTests {
     void breachedTestPass() {
         setUpUser();
         assertThrows(BreachedPasswordException.class,
-                () -> userDetailsService.changePass(correctUser, getBreachedPassword()));
+                () -> userDetailsService.changePass(correctUser, userUtilsComponent.getBreachedPassword()));
     }
 
     private void setUpUser() {
         userDetailsService.signUp(correctUserRequest);
-    }
-
-    private String getBreachedPassword() {
-        List<BreachedPassword> passwords = breachedPasswordRepository.findAll();
-        Collections.shuffle(passwords);
-        return passwords.get(0).getPassword();
     }
 
 }

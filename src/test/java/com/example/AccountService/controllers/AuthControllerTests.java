@@ -1,13 +1,11 @@
 package com.example.AccountService.controllers;
 
 import com.example.AccountService.AccountServiceApplication;
+import com.example.AccountService.config.TestConfig;
 import com.example.AccountService.dto.ChangePasswordRequest;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
-import com.example.AccountService.exceptions.BreachedPasswordException;
-import com.example.AccountService.exceptions.SamePasswordException;
-import com.example.AccountService.exceptions.UserAlreadyExistsException;
-import com.example.AccountService.services.UserDetailsServiceImpl;
+import com.example.AccountService.test_utils.UserUtilsBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,15 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -33,25 +29,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = AccountServiceApplication.class)
+@Import(TestConfig.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 class AuthControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private UserDetailsServiceImpl userDetailsService;
-
+    @Autowired
+    private UserUtilsBean userUtilsBean;
     private ObjectMapper objectMapper = new ObjectMapper();
-
     private UserRequest userRequest;
-
     private UserResponse userResponse;
-
     private ChangePasswordRequest changePasswordRequest;
-
     private static final String PASSWORD = "secret_password";
-
     private static final String NEW_PASSWORD = "new_secret_password";
 
     @BeforeEach
@@ -78,7 +69,6 @@ class AuthControllerTests {
     @Test
     @DisplayName("Signing up a new user returns status 200 and correct json")
     void testSignUpWithNewUser() throws Exception {
-        when(userDetailsService.signUp(any())).thenReturn(userResponse);
         mockMvc.perform(post("/api/auth/signup")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(userRequest)))
@@ -89,7 +79,7 @@ class AuthControllerTests {
     @Test
     @DisplayName("Signing up duplicate user returns status 400")
     void testSignUpDuplicate() throws Exception {
-        when(userDetailsService.signUp(any())).thenThrow(UserAlreadyExistsException.class);
+        setUpUser();
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequest)))
@@ -136,7 +126,8 @@ class AuthControllerTests {
     @WithUserDetails
     @DisplayName("Change pass with breached password returns 400")
     void testChangePassBreached() throws Exception {
-        when(userDetailsService.changePass(any(), anyString())).thenThrow(BreachedPasswordException.class);
+        changePasswordRequest.setPassword(userUtilsBean.getBreachedPassword());
+
         mockMvc.perform(post("/api/auth/changepass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(changePasswordRequest)))
@@ -148,11 +139,17 @@ class AuthControllerTests {
     @WithUserDetails
     @DisplayName("Change pass with same password returns 400")
     void testChangePassSame() throws Exception {
-        when(userDetailsService.changePass(any(), anyString())).thenThrow(SamePasswordException.class);
+        setUpUser();
         mockMvc.perform(post("/api/auth/changepass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(changePasswordRequest)))
                 .andExpect(status().isBadRequest());
+    }
+
+    private void setUpUser() throws Exception {
+        mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userRequest)));
     }
 
 }
