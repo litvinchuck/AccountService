@@ -4,7 +4,6 @@ import com.example.AccountService.dto.ChangePasswordRequest;
 import com.example.AccountService.dto.ChangePasswordResponse;
 import com.example.AccountService.dto.UserRequest;
 import com.example.AccountService.dto.UserResponse;
-import com.example.AccountService.models.User;
 import com.example.AccountService.services.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -38,10 +37,10 @@ public class AuthController {
         return userDetailsService.signUp(user);
     }
 
-    @PostMapping("changepass")
+    @PostMapping("changepass") //TODO: returns 401 instead of 400
     public ChangePasswordResponse changePass(@RequestBody @Valid ChangePasswordRequest passRequest, Authentication auth) {
         logger.info("POST api/auth/changepass user={}", auth.getPrincipal());
-        return userDetailsService.changePass((UserDetails) auth.getPrincipal(), passRequest.getPassword());
+        return userDetailsService.changePass((UserDetails) auth.getPrincipal(), passRequest.getNewPassword());
     }
 
 }

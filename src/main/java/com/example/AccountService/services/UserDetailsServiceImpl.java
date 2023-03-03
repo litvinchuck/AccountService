@@ -77,14 +77,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public ChangePasswordResponse changePass(UserDetails user, String newPassword) {
-        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+        if (passwordEncoder.matches(newPassword, user.getPassword())) { //TODO: figure out why this check fails
+            logger.info("user {} tried to sign up with the same password", user.getUsername());
             throw new SamePasswordException("The passwords must be different!");
         }
         if (breachedPasswordRepository.existsByPassword(newPassword)) {
+            logger.info("user {} tried to sign up with breached password", user.getUsername());
             throw new BreachedPasswordException("The password is in the hacker's database!");
         }
 
         User model = modelMapper.map(user, User.class);
+        model.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(model);
         return modelMapper.map(user, ChangePasswordResponse.class);
     }

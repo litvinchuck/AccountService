@@ -44,6 +44,7 @@ class AuthControllerTests {
     private ChangePasswordRequest changePasswordRequest;
     private static final String PASSWORD = "secret_password";
     private static final String NEW_PASSWORD = "new_secret_password";
+    private static final String NEW_PASSWORD_HASH = "$2a$12$IT3wzbFeWJJaHWNwcy9LQO4CdPjQn8Sf987IdL3M5Wu5ox/yFC4b2";
 
     @BeforeEach
     void setUp() {
@@ -62,7 +63,7 @@ class AuthControllerTests {
                 .build();
 
         changePasswordRequest = ChangePasswordRequest.builder()
-                .password(NEW_PASSWORD)
+                .newPassword(NEW_PASSWORD)
                 .build();
     }
 
@@ -126,7 +127,7 @@ class AuthControllerTests {
     @WithUserDetails
     @DisplayName("Change pass with breached password returns 400")
     void testChangePassBreached() throws Exception {
-        changePasswordRequest.setPassword(userUtilsBean.getBreachedPassword());
+        changePasswordRequest.setNewPassword(userUtilsBean.getBreachedPassword());
 
         mockMvc.perform(post("/api/auth/changepass")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,11 +136,10 @@ class AuthControllerTests {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "USER", password = NEW_PASSWORD_HASH)
     @WithUserDetails
     @DisplayName("Change pass with same password returns 400")
     void testChangePassSame() throws Exception {
-        setUpUser();
         mockMvc.perform(post("/api/auth/changepass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(changePasswordRequest)))

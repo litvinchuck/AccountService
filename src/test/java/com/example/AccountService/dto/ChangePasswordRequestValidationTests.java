@@ -18,7 +18,7 @@ public class ChangePasswordRequestValidationTests {
     @BeforeEach
     void setUpBeforeEach() {
         correctChangePasswordRequest = ChangePasswordRequest.builder()
-                .password("secret_password")
+                .newPassword("secret_password")
                 .build();
     }
 
@@ -31,21 +31,21 @@ public class ChangePasswordRequestValidationTests {
     @Test
     @DisplayName("Test changepass with password less than 12 symbols")
     void shortChangePass() {
-        correctChangePasswordRequest.setPassword(SHORT_PASSWORD);
+        correctChangePasswordRequest.setNewPassword(SHORT_PASSWORD);
         assertOneValidationViolation(correctChangePasswordRequest);
     }
 
     @Test
     @DisplayName("Test changepass with password exactly 12 symbols")
     void exactChangePass() {
-        correctChangePasswordRequest.setPassword(EXACT_PASSWORD);
+        correctChangePasswordRequest.setNewPassword(EXACT_PASSWORD);
         assertNoValidationViolations(correctChangePasswordRequest);
     }
 
     @Test
     @DisplayName("Test changepass with null password")
     void nullChangePass() {
-        correctChangePasswordRequest.setPassword(null);
+        correctChangePasswordRequest.setNewPassword(null);
         assertOneValidationViolation(correctChangePasswordRequest);
     }
 

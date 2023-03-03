@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChangePasswordRequest {
 
-    @JsonProperty("new_password")
     @NotNull
     @Size(min = 12)
-    private String password;
+    @JsonProperty("new_password")
+    private String newPassword;
 
 }
