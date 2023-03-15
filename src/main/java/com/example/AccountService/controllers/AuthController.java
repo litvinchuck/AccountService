@@ -37,7 +37,7 @@ public class AuthController {
         return userDetailsService.signUp(user);
     }
 
-    @PostMapping("changepass") //TODO: returns 401 instead of 400
+    @PostMapping("changepass")
     public ChangePasswordResponse changePass(@RequestBody @Valid ChangePasswordRequest passRequest, Authentication auth) {
         logger.info("POST api/auth/changepass user={}", auth.getPrincipal());
         return userDetailsService.changePass((UserDetails) auth.getPrincipal(), passRequest.getNewPassword());
