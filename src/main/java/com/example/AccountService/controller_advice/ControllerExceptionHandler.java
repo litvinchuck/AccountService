@@ -27,8 +27,8 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.joining(", "));
 
         ExceptionResponse body = ExceptionResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .status(status.value())
+                .error(HttpStatus.valueOf(status.value()).getReasonPhrase())
                 .timestamp(LocalDateTime.now())
                 .message(message)
                 .path(request.getDescription(false))
