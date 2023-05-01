@@ -1,4 +1,4 @@
-package com.example.AccountService.dto;
+package com.example.AccountService.dto.change_password;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

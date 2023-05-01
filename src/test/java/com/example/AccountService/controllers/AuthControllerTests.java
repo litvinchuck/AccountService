@@ -2,9 +2,9 @@ package com.example.AccountService.controllers;
 
 import com.example.AccountService.AccountServiceApplication;
 import com.example.AccountService.config.TestConfig;
-import com.example.AccountService.dto.ChangePasswordRequest;
-import com.example.AccountService.dto.UserRequest;
-import com.example.AccountService.dto.UserResponse;
+import com.example.AccountService.dto.change_password.ChangePasswordRequest;
+import com.example.AccountService.dto.user_request.UserRequest;
+import com.example.AccountService.dto.user_request.UserResponse;
 import com.example.AccountService.test_utils.UserUtilsBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

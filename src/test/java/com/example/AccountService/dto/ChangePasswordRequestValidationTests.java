@@ -1,5 +1,6 @@
 package com.example.AccountService.dto;
 
+import com.example.AccountService.dto.change_password.ChangePasswordRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.example.AccountService.dto;
+package com.example.AccountService.dto.change_password;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;

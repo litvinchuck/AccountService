@@ -2,9 +2,9 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.AccountServiceApplication;
 import com.example.AccountService.config.TestConfig;
-import com.example.AccountService.dto.ChangePasswordResponse;
-import com.example.AccountService.dto.UserRequest;
-import com.example.AccountService.dto.UserResponse;
+import com.example.AccountService.dto.change_password.ChangePasswordResponse;
+import com.example.AccountService.dto.user_request.UserRequest;
+import com.example.AccountService.dto.user_request.UserResponse;
 import com.example.AccountService.exceptions.BreachedPasswordException;
 import com.example.AccountService.exceptions.SamePasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
