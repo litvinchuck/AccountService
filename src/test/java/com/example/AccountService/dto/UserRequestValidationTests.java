@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.example.AccountService.test_utils.TestConstants.UserDetails.*;
 import static com.example.AccountService.test_utils.ValidationUtils.*;
 
 public class UserRequestValidationTests {
@@ -18,10 +19,10 @@ public class UserRequestValidationTests {
     @BeforeEach
     void setUpBeforeEach() {
         correctUserRequest = UserRequest.builder()
-                .name("John")
-                .lastName("Doe")
-                .email("jdoe@acme.com")
-                .password("secret_password")
+                .name(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
+                .password(PASSWORD)
                 .build();
     }
 

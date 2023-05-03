@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.YearMonth;
 
+import static com.example.AccountService.test_utils.TestConstants.UserDetails.EMAIL;
 import static com.example.AccountService.test_utils.ValidationUtils.*;
 
 public class PayrollRequestValidationTests {
@@ -20,7 +21,7 @@ public class PayrollRequestValidationTests {
         correctPayrollRequest = PayrollRequest.builder()
                 .salary(100)
                 .period(YearMonth.now())
-                .employeeEmail("jdoe@acme.com")
+                .employeeEmail(EMAIL)
                 .build();
     }
 

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.example.AccountService.test_utils.TestConstants.UserDetails.PASSWORD;
 import static com.example.AccountService.test_utils.ValidationUtils.assertNoValidationViolations;
 import static com.example.AccountService.test_utils.ValidationUtils.assertOneValidationViolation;
 
@@ -19,7 +20,7 @@ public class ChangePasswordRequestValidationTests {
     @BeforeEach
     void setUpBeforeEach() {
         correctChangePasswordRequest = ChangePasswordRequest.builder()
-                .newPassword("secret_password")
+                .newPassword(PASSWORD)
                 .build();
     }
 

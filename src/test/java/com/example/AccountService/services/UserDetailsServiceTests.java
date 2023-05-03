@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static com.example.AccountService.test_utils.TestConstants.UserDetails.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,9 +46,6 @@ class UserDetailsServiceTests {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private BreachedPasswordRepository breachedPasswordRepository;
-
-    @Autowired
     private UserUtilsBean userUtilsComponent;
 
     private UserRequest correctUserRequest;
@@ -58,18 +56,14 @@ class UserDetailsServiceTests {
 
     private ChangePasswordResponse correctChangePassResponse;
 
-    private static final String PASSWORD = "secret_password";
-
-    private static final String NEW_PASSWORD = "new_secret_password";
-
     @BeforeEach
     void setUp() {
         when(passwordEncoder.encode(anyString())).thenReturn(PASSWORD);
 
         correctUserRequest = UserRequest.builder()
-                .name("John")
-                .lastName("Doe")
-                .email("jdoe@acme.com")
+                .name(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
                 .password(PASSWORD)
                 .build();
 

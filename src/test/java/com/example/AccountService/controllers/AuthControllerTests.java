@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.example.AccountService.test_utils.TestConstants.UserDetails.*;
+
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = AccountServiceApplication.class)
 @Import(TestConfig.class)
@@ -42,24 +44,21 @@ class AuthControllerTests {
     private UserRequest userRequest;
     private UserResponse userResponse;
     private ChangePasswordRequest changePasswordRequest;
-    private static final String PASSWORD = "secret_password";
-    private static final String NEW_PASSWORD = "new_secret_password";
-    private static final String NEW_PASSWORD_HASH = "$2a$12$IT3wzbFeWJJaHWNwcy9LQO4CdPjQn8Sf987IdL3M5Wu5ox/yFC4b2";
 
     @BeforeEach
     void setUp() {
         userRequest = UserRequest.builder()
-                .name("John")
-                .lastName("Doe")
-                .email("jdoe@acme.com")
+                .name(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
                 .password(PASSWORD)
                 .build();
 
         userResponse = UserResponse.builder()
                 .id(1L)
-                .name("John")
-                .lastName("Doe")
-                .email("jdoe@acme.com")
+                .name(FIRST_NAME)
+                .lastName(LAST_NAME)
+                .email(EMAIL)
                 .build();
 
         changePasswordRequest = ChangePasswordRequest.builder()
@@ -71,8 +70,8 @@ class AuthControllerTests {
     @DisplayName("Signing up a new user returns status 200 and correct json")
     void testSignUpWithNewUser() throws Exception {
         mockMvc.perform(post("/api/auth/signup")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(userRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(userResponse)));
     }
