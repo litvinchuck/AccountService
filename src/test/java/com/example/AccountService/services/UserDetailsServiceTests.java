@@ -9,7 +9,6 @@ import com.example.AccountService.exceptions.BreachedPasswordException;
 import com.example.AccountService.exceptions.SamePasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
 import com.example.AccountService.models.Role;
-import com.example.AccountService.repositories.BreachedPasswordRepository;
 import com.example.AccountService.test_utils.UserUtilsBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +25,6 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import static com.example.AccountService.test_utils.TestConstants.UserDetails.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
