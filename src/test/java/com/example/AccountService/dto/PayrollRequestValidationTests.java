@@ -12,8 +12,6 @@ import static com.example.AccountService.test_utils.ValidationUtils.*;
 
 public class PayrollRequestValidationTests {
 
-    //TODO: Test month-year formats (Not here)
-
     private PayrollRequest correctPayrollRequest;
 
     @BeforeEach

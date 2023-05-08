@@ -25,4 +25,9 @@ public class PayrollService {
     public BasicResponse uploadPayrolls(List<PayrollRequest> payrolls) {
         return BasicResponse.builder().status("OK").build();
     }
+
+    public BasicResponse updatePayrollById(Long id, PayrollRequest payroll) {
+        return BasicResponse.builder().status("OK").build();
+    }
+
 }
