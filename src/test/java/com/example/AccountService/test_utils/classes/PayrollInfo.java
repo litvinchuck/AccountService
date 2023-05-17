@@ -1,26 +1,21 @@
-package com.example.AccountService.dto.payroll;
+package com.example.AccountService.test_utils.classes;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.YearMonth;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PayrollRequest {
-
-    private Long salary;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-yyyy")
-    private YearMonth period;
+public class PayrollInfo {
 
     @JsonProperty("employee")
     private String employeeEmail;
 
+    private Long salary;
+
+    private String period;
 }

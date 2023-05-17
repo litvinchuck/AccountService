@@ -17,7 +17,7 @@ public class PayrollRequestValidationTests {
     @BeforeEach
     void setUpBeforeEach() {
         correctPayrollRequest = PayrollRequest.builder()
-                .salary(100)
+                .salary(100L)
                 .period(YearMonth.now())
                 .employeeEmail(EMAIL)
                 .build();
@@ -60,14 +60,14 @@ public class PayrollRequestValidationTests {
     @Test
     @DisplayName("Payroll request with zero salary has no validation violations")
     void zeroSalary() {
-        correctPayrollRequest.setSalary(0);
+        correctPayrollRequest.setSalary(0L);
         assertNoValidationViolations(correctPayrollRequest);
     }
 
     @Test
     @DisplayName("Payroll request with negative salary has one validation violation")
     void negativeSalary() {
-        correctPayrollRequest.setSalary(-100);
+        correctPayrollRequest.setSalary(-100L);
         assertOneValidationViolation(correctPayrollRequest);
     }
 

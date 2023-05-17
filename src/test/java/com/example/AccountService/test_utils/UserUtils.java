@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
-public class UserUtilsBean {
+public class UserUtils {
 
-    @Autowired
-    private BreachedPasswordRepository breachedPasswordRepository;
+    private final BreachedPasswordRepository breachedPasswordRepository;
+
+    public UserUtils(BreachedPasswordRepository breachedPasswordRepository) {
+        this.breachedPasswordRepository = breachedPasswordRepository;
+    }
 
     public String getBreachedPassword() {
         List<BreachedPassword> passwords = breachedPasswordRepository.findAll();

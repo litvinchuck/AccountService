@@ -1,6 +1,7 @@
 package com.example.AccountService.services;
 
 import com.example.AccountService.AccountServiceApplication;
+import com.example.AccountService.BaseSpringTest;
 import com.example.AccountService.config.TestConfig;
 import com.example.AccountService.dto.change_password.ChangePasswordResponse;
 import com.example.AccountService.dto.user_request.UserRequest;
@@ -9,7 +10,7 @@ import com.example.AccountService.exceptions.BreachedPasswordException;
 import com.example.AccountService.exceptions.SamePasswordException;
 import com.example.AccountService.exceptions.UserAlreadyExistsException;
 import com.example.AccountService.models.Role;
-import com.example.AccountService.test_utils.UserUtilsBean;
+import com.example.AccountService.test_utils.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,11 +32,9 @@ import static org.mockito.Mockito.when;
 
 import com.example.AccountService.models.User;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = AccountServiceApplication.class)
-@Import(TestConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class UserDetailsServiceTests {
+class UserDetailsServiceTests extends BaseSpringTest {
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -44,7 +43,7 @@ class UserDetailsServiceTests {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private UserUtilsBean userUtilsComponent;
+    private UserUtils userUtilsComponent;
 
     private UserRequest correctUserRequest;
 
