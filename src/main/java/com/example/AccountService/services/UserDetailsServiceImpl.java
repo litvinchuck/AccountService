@@ -77,7 +77,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public ChangePasswordResponse changePass(UserDetails user, String newPassword) {
-        if (passwordEncoder.matches(newPassword, user.getPassword())) { //TODO: figure out why this check fails
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
             logger.info("user {} tried to sign up with the same password", user.getUsername());
             throw new SamePasswordException("The passwords must be different!");
         }

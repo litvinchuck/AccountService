@@ -3,14 +3,15 @@ package com.example.AccountService.services;
 import com.example.AccountService.AccountServiceApplication;
 import com.example.AccountService.dto.payroll.PayrollRequest;
 import com.example.AccountService.dto.user_request.UserRequest;
-import com.example.AccountService.exceptions.UserDoesNotExistException;
 import com.example.AccountService.exceptions.UserHasMultipleSalariesException;
 import com.example.AccountService.models.Payroll;
 import com.example.AccountService.repositories.PayrollRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.YearMonth;
@@ -38,13 +39,24 @@ public class PayrollServiceTests {
     private final PayrollRequest anotherCorrectRequest = PayrollRequest.builder()
             .salary(100L)
             .period(YearMonth.now())
-            .employeeEmail("another" + EMAIL)
+            .employeeEmail(ANOTHER_EMAIL)
+            .build();
+    private final PayrollRequest wrongPayrollRequest = PayrollRequest.builder()
+            .salary(100L)
+            .period(YearMonth.now())
+            .employeeEmail(WRONG_EMAIL)
             .build();
     private List<PayrollRequest> correctRequestsList = List.of(correctPayrollRequest, anotherCorrectRequest);
     private final UserRequest correctUserRequest = UserRequest.builder()
             .name(FIRST_NAME)
             .lastName(LAST_NAME)
             .email(EMAIL)
+            .password(PASSWORD)
+            .build();
+    private final UserRequest anotherCorrectUserRequest = UserRequest.builder()
+            .name(FIRST_NAME)
+            .lastName(LAST_NAME)
+            .email(ANOTHER_EMAIL)
             .password(PASSWORD)
             .build();
     private final Payroll correctPayroll = Payroll.builder()
@@ -59,10 +71,14 @@ public class PayrollServiceTests {
             .build();
     private static final String WRONG_EMAIL = "wrong@man.com";
 
+    @BeforeEach
+    void setUp() {
+        signUpUsers();
+    }
+
     @Test
     @DisplayName("POSTing correct payrolls passes")
     void postCorrectPayrolls() {
-        userDetailsService.signUp(correctUserRequest);
         assertDoesNotThrow(() -> payrollService.uploadPayrolls(correctRequestsList));
     }
 
@@ -70,13 +86,13 @@ public class PayrollServiceTests {
     @DisplayName("POSTing payrolls for a non-existing user fails")
     void notAUser() {
         correctPayrollRequest.setEmployeeEmail(WRONG_EMAIL);
-        assertThrows(UserDoesNotExistException.class, () -> payrollService.uploadPayrolls(correctRequestsList));
+        assertThrows(UsernameNotFoundException.class, () -> payrollService.uploadPayrolls(correctRequestsList));
     }
 
     @Test
-    @DisplayName("Throwing UserDoesNotExistException during POSTing rolls back the transaction")
+    @DisplayName("Throwing UsernameNotFoundException during POSTing rolls back the transaction")
     void notAUserRollsBack() {
-        notAUser();
+        anotherCorrectRequest.setEmployeeEmail(WRONG_EMAIL);
         assertThat(payrollRepository.count()).isEqualTo(0);
     }
 
@@ -97,7 +113,6 @@ public class PayrollServiceTests {
     @Test
     @DisplayName("Updating a correct payroll passes")
     void updateWithCorrectPayroll() {
-        userDetailsService.signUp(correctUserRequest);
         payrollService.uploadPayrolls(correctRequestsList);
         assertDoesNotThrow(() -> payrollService.updatePayrollById(1L, correctPayrollRequest));
     }
@@ -105,11 +120,9 @@ public class PayrollServiceTests {
     @Test
     @DisplayName("Updating a payroll for a non-existing user fails")
     void updateNotAUser() {
-        correctPayrollRequest.setEmployeeEmail(WRONG_EMAIL);
         payrollService.uploadPayrolls(correctRequestsList);
-
-        assertThrows(UserDoesNotExistException.class,
-                () -> payrollService.updatePayrollById(1L, correctPayrollRequest));
+        assertThrows(UsernameNotFoundException.class,
+                () -> payrollService.updatePayrollById(1L, wrongPayrollRequest));
     }
 
     @Test
@@ -135,5 +148,10 @@ public class PayrollServiceTests {
         updateNonUniquePeriodUserPair();
         assertThat(payrollRepository.getReferenceById(1L)).isEqualTo(correctPayroll);
         assertThat(payrollRepository.getReferenceById(2L)).isEqualTo(anotherCorrectPayroll);
+    }
+
+    private void signUpUsers() {
+        userDetailsService.signUp(correctUserRequest);
+        userDetailsService.signUp(anotherCorrectUserRequest);
     }
 }
