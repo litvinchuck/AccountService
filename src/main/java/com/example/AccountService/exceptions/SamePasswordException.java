@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class SamePasswordException extends RuntimeException {
 
-    public SamePasswordException(String cause) {
-        super(cause);
+    public SamePasswordException() {
+        super("The passwords must be different!");
     }
 
 }

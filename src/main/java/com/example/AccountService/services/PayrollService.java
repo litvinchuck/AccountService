@@ -37,8 +37,7 @@ public class PayrollService {
                 .forEach(payroll -> {
                     if (payrollRepository.existsByUserEmail(payroll.getUser().getEmail())) {
                         logger.info("User {} already has a payroll", payroll.getUser().getEmail()); //TODO: refactor exceptions so they have errors in constructors
-                        throw new UserHasMultipleSalariesException("User %s already has a payroll"
-                                .formatted(payroll.getUser().getEmail()));
+                        throw new UserHasMultipleSalariesException(payroll.getUser().getEmail());
                     }
                     payrollRepository.save(payroll);
                 });
@@ -49,7 +48,7 @@ public class PayrollService {
     public BasicResponse updatePayrollById(Long id, PayrollRequest payroll) {
         payrollRepository.save(mapRequestToPayroll(id, payroll));
         if (payrollRepository.countByUserEmail(payroll.getEmployeeEmail()) > 1) {
-            throw new UserHasMultipleSalariesException("User %s already has a payroll".formatted(payroll.getEmployeeEmail()));
+            throw new UserHasMultipleSalariesException(payroll.getEmployeeEmail());
         }
         return BasicResponse.builder().status("OK").build();
     }

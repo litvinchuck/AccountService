@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class UserHasMultipleSalariesException extends RuntimeException {
 
-    public UserHasMultipleSalariesException(String cause) {
-        super(cause);
+    public UserHasMultipleSalariesException(String userEmail) {
+        super("User %s already has a payroll".formatted(userEmail));
     }
 
 }

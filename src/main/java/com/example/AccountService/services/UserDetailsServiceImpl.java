@@ -53,18 +53,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username.toLowerCase()).orElseThrow(() -> {
             logger.info("user for username {} not found", username);
-            return new UsernameNotFoundException("Not found: " + username);
+            return new UsernameNotFoundException(username);
         });
     }
 
     public UserResponse signUp(UserRequest userRequest) {
         if (userRepository.existsByEmail(userRequest.getEmail().toLowerCase())) {
             logger.info("user for username {} already exists", userRequest.getEmail());
-            throw new UserAlreadyExistsException("user %s already exists".formatted(userRequest.getEmail()));
+            throw new UserAlreadyExistsException(userRequest.getEmail());
         }
         if (breachedPasswordRepository.existsByPassword(userRequest.getPassword())) {
             logger.info("user for username {} uses a breached password", userRequest.getEmail());
-            throw new BreachedPasswordException("used password is breached");
+            throw new BreachedPasswordException();
         }
 
         User user = userTypeMap.map(userRequest);
@@ -79,11 +79,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public ChangePasswordResponse changePass(UserDetails user, String newPassword) {
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             logger.info("user {} tried to sign up with the same password", user.getUsername());
-            throw new SamePasswordException("The passwords must be different!");
+            throw new SamePasswordException();
         }
         if (breachedPasswordRepository.existsByPassword(newPassword)) {
             logger.info("user {} tried to sign up with breached password", user.getUsername());
-            throw new BreachedPasswordException("The password is in the hacker's database!");
+            throw new BreachedPasswordException();
         }
 
         User model = modelMapper.map(user, User.class);
