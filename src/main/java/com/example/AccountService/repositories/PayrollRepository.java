@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PayrollRepository extends JpaRepository<Payroll, Long> {
-
+    Payroll getPayrollByUserEmail(String email);
+    boolean existsByUserEmail(String email);
+    Long countByUserEmail(String email);
 }

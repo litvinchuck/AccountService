@@ -1,7 +1,5 @@
 package com.example.AccountService.test_utils;
 
-import static com.example.AccountService.test_utils.TestConstants.UserDetails.EMAIL;
-
 public class TestConstants {
 
     public static class UserDetails {

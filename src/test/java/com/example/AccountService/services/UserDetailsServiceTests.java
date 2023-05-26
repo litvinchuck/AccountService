@@ -164,5 +164,4 @@ class UserDetailsServiceTests extends BaseSpringTest {
     private void setUpUser() {
         userDetailsService.signUp(correctUserRequest);
     }
-
 }

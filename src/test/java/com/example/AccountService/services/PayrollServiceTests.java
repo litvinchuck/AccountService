@@ -59,16 +59,6 @@ public class PayrollServiceTests {
             .email(ANOTHER_EMAIL)
             .password(PASSWORD)
             .build();
-    private final Payroll correctPayroll = Payroll.builder()
-            .id(1L)
-            .salary(correctPayrollRequest.getSalary())
-            .period(correctPayrollRequest.getPeriod())
-            .build();
-    private final Payroll anotherCorrectPayroll = Payroll.builder()
-            .id(2L)
-            .salary(anotherCorrectRequest.getSalary())
-            .period(anotherCorrectRequest.getPeriod())
-            .build();
     private static final String WRONG_EMAIL = "wrong@man.com";
 
     @BeforeEach
@@ -112,7 +102,7 @@ public class PayrollServiceTests {
 
     @Test
     @DisplayName("Updating a correct payroll passes")
-    void updateWithCorrectPayroll() {
+    void updateWithCorrectPayroll() { //TODO: figure out why it fails!
         payrollService.uploadPayrolls(correctRequestsList);
         assertDoesNotThrow(() -> payrollService.updatePayrollById(1L, correctPayrollRequest));
     }
@@ -129,8 +119,10 @@ public class PayrollServiceTests {
     @DisplayName("Throwing UserDoesNotExistException during update rolls back the transaction")
     void updateNotAUserRollsBack() {
         updateNotAUser();
-        assertThat(payrollRepository.getReferenceById(1L)).isEqualTo(correctPayroll);
-        assertThat(payrollRepository.getReferenceById(2L)).isEqualTo(anotherCorrectPayroll);
+        assertThatPayrollWasSavedCorrectly(correctPayrollRequest,
+                payrollRepository.getPayrollByUserEmail(correctPayrollRequest.getEmployeeEmail()));
+        assertThatPayrollWasSavedCorrectly(anotherCorrectRequest,
+                payrollRepository.getPayrollByUserEmail(anotherCorrectRequest.getEmployeeEmail()));
     }
 
     @Test
@@ -146,8 +138,16 @@ public class PayrollServiceTests {
     @DisplayName("Throwing UserHasMultipleSalariesException during the update rolls back the transaction")
     void updateNonUniquePeriodUserPairRollsBack() {
         updateNonUniquePeriodUserPair();
-        assertThat(payrollRepository.getReferenceById(1L)).isEqualTo(correctPayroll);
-        assertThat(payrollRepository.getReferenceById(2L)).isEqualTo(anotherCorrectPayroll);
+        assertThatPayrollWasSavedCorrectly(correctPayrollRequest,
+                payrollRepository.getPayrollByUserEmail(correctPayrollRequest.getEmployeeEmail()));
+        assertThatPayrollWasSavedCorrectly(anotherCorrectRequest,
+                payrollRepository.getPayrollByUserEmail(anotherCorrectRequest.getEmployeeEmail()));
+    }
+
+    private void assertThatPayrollWasSavedCorrectly(PayrollRequest payrollRequest, Payroll payroll) {
+        assertThat(payroll.getSalary()).isEqualTo(payrollRequest.getSalary());
+        assertThat(payroll.getPeriod()).isEqualTo(payrollRequest.getPeriod());
+        assertThat(payroll.getUser().getEmail()).isEqualTo(payrollRequest.getEmployeeEmail());
     }
 
     private void signUpUsers() {

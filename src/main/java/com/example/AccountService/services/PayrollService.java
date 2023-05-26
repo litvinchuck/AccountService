@@ -2,6 +2,7 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.dto.BasicResponse;
 import com.example.AccountService.dto.payroll.PayrollRequest;
+import com.example.AccountService.exceptions.UserHasMultipleSalariesException;
 import com.example.AccountService.models.Payroll;
 import com.example.AccountService.models.User;
 import com.example.AccountService.repositories.PayrollRepository;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PayrollService {
@@ -32,17 +32,38 @@ public class PayrollService {
 
     @Transactional
     public BasicResponse uploadPayrolls(List<PayrollRequest> payrolls) {
-        payrolls.forEach((payrollRequest -> {
-            Payroll payroll = modelMapper.map(payrollRequest, Payroll.class);
-            User user = (User) userDetailsService.loadUserByUsername(payrollRequest.getEmployeeEmail());
-            payroll.setUser(user);
-            payrollRepository.save(payroll);
-        }));
+        payrolls.stream()
+                .map(this::mapRequestToPayroll)
+                .forEach(payroll -> {
+                    if (payrollRepository.existsByUserEmail(payroll.getUser().getEmail())) {
+                        logger.info("User {} already has a payroll", payroll.getUser().getEmail()); //TODO: refactor exceptions so they have errors in constructors
+                        throw new UserHasMultipleSalariesException("User %s already has a payroll"
+                                .formatted(payroll.getUser().getEmail()));
+                    }
+                    payrollRepository.save(payroll);
+                });
         return BasicResponse.builder().status("OK").build();
     }
 
+    @Transactional
     public BasicResponse updatePayrollById(Long id, PayrollRequest payroll) {
+        payrollRepository.save(mapRequestToPayroll(id, payroll));
+        if (payrollRepository.countByUserEmail(payroll.getEmployeeEmail()) > 1) {
+            throw new UserHasMultipleSalariesException("User %s already has a payroll".formatted(payroll.getEmployeeEmail()));
+        }
         return BasicResponse.builder().status("OK").build();
     }
 
+    private Payroll mapRequestToPayroll(PayrollRequest payrollRequest) {
+        Payroll payroll = modelMapper.map(payrollRequest, Payroll.class);
+        User user = (User) userDetailsService.loadUserByUsername(payrollRequest.getEmployeeEmail());
+        payroll.setUser(user);
+        return payroll;
+    }
+
+    private Payroll mapRequestToPayroll(Long id, PayrollRequest payrollRequest) {
+        Payroll payroll = mapRequestToPayroll(payrollRequest);
+        payroll.setId(id);
+        return payroll;
+    }
 }
