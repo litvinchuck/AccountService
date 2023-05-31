@@ -102,7 +102,7 @@ public class PayrollServiceTests {
 
     @Test
     @DisplayName("Updating a correct payroll passes")
-    void updateWithCorrectPayroll() { //TODO: figure out why it fails!
+    void updateWithCorrectPayroll() {
         payrollService.uploadPayrolls(correctRequestsList);
         assertDoesNotThrow(() -> payrollService.updatePayrollById(1L, correctPayrollRequest));
     }

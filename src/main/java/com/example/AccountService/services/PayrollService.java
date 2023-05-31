@@ -36,7 +36,7 @@ public class PayrollService {
                 .map(this::mapRequestToPayroll)
                 .forEach(payroll -> {
                     if (payrollRepository.existsByUserEmail(payroll.getUser().getEmail())) {
-                        logger.info("User {} already has a payroll", payroll.getUser().getEmail()); //TODO: refactor exceptions so they have errors in constructors
+                        logger.info("User {} already has a payroll", payroll.getUser().getEmail());
                         throw new UserHasMultipleSalariesException(payroll.getUser().getEmail());
                     }
                     payrollRepository.save(payroll);
