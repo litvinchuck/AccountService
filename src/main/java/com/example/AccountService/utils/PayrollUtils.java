@@ -11,8 +11,7 @@ public class PayrollUtils {
     }
 
     public static String generateSalaryString(Payroll payroll) {
-//        int dollars = payroll.getSalary() / 100;
-//        return "%d dollar(s) %d cent(s)".formatted(dollars, cents);
-        return "%d dollar(s) %d cent(s)";
+        return getFormatString()
+                .formatted(payroll.getSalary() / 100, payroll.getSalary() % 100);
     }
 }
