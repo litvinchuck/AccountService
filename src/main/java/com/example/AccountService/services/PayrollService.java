@@ -2,6 +2,7 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.dto.BasicResponse;
 import com.example.AccountService.dto.payroll.PayrollRequest;
+import com.example.AccountService.dto.payroll.PayrollResponse;
 import com.example.AccountService.exceptions.UserHasMultipleSalariesException;
 import com.example.AccountService.models.Payroll;
 import com.example.AccountService.models.User;
@@ -28,6 +29,12 @@ public class PayrollService {
         this.modelMapper = modelMapper;
         this.payrollRepository = payrollRepository;
         this.userDetailsService = userDetailsService;
+    }
+
+    public List<PayrollResponse> getPayrollsForUser(String userEmail) {
+        return List.of(PayrollResponse.builder().build());
+//        return PayrollUtils.generateSalaryString(
+//                payrollRepository.getPayrollByUserEmail(userEmail));
     }
 
     @Transactional

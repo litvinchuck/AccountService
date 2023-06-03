@@ -2,10 +2,12 @@ package com.example.AccountService.services;
 
 import com.example.AccountService.AccountServiceApplication;
 import com.example.AccountService.dto.payroll.PayrollRequest;
+import com.example.AccountService.dto.payroll.PayrollResponse;
 import com.example.AccountService.dto.user_request.UserRequest;
 import com.example.AccountService.exceptions.UserHasMultipleSalariesException;
 import com.example.AccountService.models.Payroll;
 import com.example.AccountService.repositories.PayrollRepository;
+import com.example.AccountService.utils.PayrollUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,6 +66,21 @@ public class PayrollServiceTests {
     @BeforeEach
     void setUp() {
         signUpUsers();
+    }
+
+    @Test
+    @DisplayName("GETing an existing payroll for an existing user works")
+    void getPayrollForExistingUser() {
+        payrollService.uploadPayrolls(correctRequestsList);
+        assertThatPayrollResponseIsCorrect(
+                payrollService.getPayrollsForUser(correctPayrollRequest.getEmployeeEmail()).get(0),
+                correctPayrollRequest);
+    }
+
+    @Test
+    @DisplayName("GETing payroll for a not existing user throws UserNotFoundException")
+    void getPayrollForNotExistingUser() {
+        assertThrows(UsernameNotFoundException.class, () -> payrollService.getPayrollsForUser(WRONG_EMAIL));
     }
 
     @Test
@@ -148,6 +165,17 @@ public class PayrollServiceTests {
         assertThat(payroll.getSalary()).isEqualTo(payrollRequest.getSalary());
         assertThat(payroll.getPeriod()).isEqualTo(payrollRequest.getPeriod());
         assertThat(payroll.getUser().getEmail()).isEqualTo(payrollRequest.getEmployeeEmail());
+    }
+
+    private void assertThatPayrollResponseIsCorrect(PayrollResponse response, PayrollRequest request) {
+        assertThat(response.getEmployeeEmail())
+                .isEqualTo(request.getEmployeeEmail());
+        assertThat(response.getPeriod())
+                .isEqualTo(request.getPeriod());
+        assertThat(response.getSalary())
+                .isEqualTo(PayrollUtils.generateSalaryString(
+                    Payroll.builder().salary(request.getSalary()).build()
+                ));
     }
 
     private void signUpUsers() {
