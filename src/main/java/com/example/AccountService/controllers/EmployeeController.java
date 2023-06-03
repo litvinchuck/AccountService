@@ -1,6 +1,6 @@
 package com.example.AccountService.controllers;
 
-import com.example.AccountService.dto.user_request.UserResponse;
+import com.example.AccountService.dto.user.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

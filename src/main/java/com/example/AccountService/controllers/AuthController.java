@@ -2,8 +2,8 @@ package com.example.AccountService.controllers;
 
 import com.example.AccountService.dto.change_password.ChangePasswordRequest;
 import com.example.AccountService.dto.change_password.ChangePasswordResponse;
-import com.example.AccountService.dto.user_request.UserRequest;
-import com.example.AccountService.dto.user_request.UserResponse;
+import com.example.AccountService.dto.user.UserRequest;
+import com.example.AccountService.dto.user.UserResponse;
 import com.example.AccountService.services.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

@@ -3,7 +3,7 @@ package com.example.AccountService.services;
 import com.example.AccountService.AccountServiceApplication;
 import com.example.AccountService.dto.payroll.PayrollRequest;
 import com.example.AccountService.dto.payroll.PayrollResponse;
-import com.example.AccountService.dto.user_request.UserRequest;
+import com.example.AccountService.dto.user.UserRequest;
 import com.example.AccountService.exceptions.UserHasMultipleSalariesException;
 import com.example.AccountService.models.Payroll;
 import com.example.AccountService.repositories.PayrollRepository;

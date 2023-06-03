@@ -1,6 +1,6 @@
 package com.example.AccountService.config;
 
-import com.example.AccountService.dto.user_request.UserRequest;
+import com.example.AccountService.dto.user.UserRequest;
 import com.example.AccountService.models.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
